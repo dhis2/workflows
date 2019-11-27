@@ -1,0 +1,16 @@
+{
+    "name": "@dhis2/workflows",
+    "version": "1.0.0",
+    "description": "DHIS2 Workflows for GitHub Actions",
+    "main": "index.js",
+    "repository": "git@github.com:dhis2/workflows.git",
+    "author": "Viktor Varland <viktor@dhis2.org>",
+    "license": "MIT",
+    "private": true,
+    "devDependencies": {
+        "@dhis2/cli-style": "^5.0.2"
+    },
+    "scripts": {
+        "format": "d2-style text apply"
+    }
+}
