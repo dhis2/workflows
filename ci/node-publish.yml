@@ -15,12 +15,18 @@ jobs:
               with:
                   node-version: 12.x
 
-            - name: install and test
-              run: |
-                  yarn install
-                  yarn test
-                  ./bin/d2-style js check --all
-                  # remember to add a build step here if needed
+            - name: Install
+              run: yarn install
+
+            # remove this if you don't have tests
+            # ... you maniac
+            - name: Test
+              run: yarn test
+
+            # remember to add a build step here if needed
+            # or remove it if you don't
+            - name: Build
+              run: yarn build
 
             - name: publish to npm
               run: npx @dhis2/cli-utils release --publish npm
