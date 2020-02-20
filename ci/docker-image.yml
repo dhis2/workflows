@@ -1,0 +1,16 @@
+name: 'dhis2-docker image'
+
+on: [push]
+
+env:
+    # TODO: Change variable to your image's name.
+    IMAGE_NAME: 'replace-me'
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v2
+            - name: Build the Docker image
+              run: docker build . --file Dockerfile --tag ${{ env.IMAGE_NAME }}:$(date +%s)

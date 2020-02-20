@@ -1,13 +1,18 @@
 # For more options:
 # https://github.com/cypress-io/github-action
 
-name: 'DHIS2: Cypress'
+name: 'dhis2-cypress'
 
 on:
     push:
         branches:
             - master
     pull_request:
+
+env:
+    SERVER_START_CMD: 'custom-start-command'
+    SERVER_URL: 'custom-url'
+    CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
 
 jobs:
     cypress-run:
@@ -26,11 +31,10 @@ jobs:
               with:
                   record: true
                   parallel: true
-                  start: '{command to start server}'
-                  wait-on: '{url to wait on}'
+                  start: ${{ env.SERVER_START_CMD }}
+                  wait-on: ${{ env.SERVER_URL }}
                   wait-on-timeout: 60
                   group: 'e2e'
               env:
                   CI: true
                   STORYBOOK_TESTING: true
-                  CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}

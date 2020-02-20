@@ -1,9 +1,17 @@
-name: 'DHIS2: Release'
+name: 'dhis2-node publish'
 
 on:
     push:
         branches:
             - master
+
+env:
+    GIT_AUTHOR_NAME: '@dhis2-bot'
+    GIT_AUTHOR_EMAIL: 'apps@dhis2.org'
+    GIT_COMMITTER_NAME: '@dhis2-bot'
+    GIT_COMMITTER_EMAIL: 'apps@dhis2.org'
+    NPM_TOKEN: ${{secrets.NPM_TOKEN}}
+    GH_TOKEN: ${{secrets.GH_TOKEN}}
 
 jobs:
     process:
@@ -19,25 +27,18 @@ jobs:
             - name: Install
               run: yarn install --frozen-lockfile
 
-            # Customize these as needed
+            # TODO: Customize these steps as needed
+            - name: Build
+              run: yarn build
+
             - name: Test
               run: yarn test
 
             - name: Lint
               run: yarn lint
-
-            - name: Build
-              run: yarn build
-            # End customization
+            # ODOT
 
             - name: Publish to NPM
               run: npx @dhis2/cli-utils release --publish npm
-              env:
-                  GIT_AUTHOR_NAME: '@dhis2-bot'
-                  GIT_AUTHOR_EMAIL: 'apps@dhis2.org'
-                  GIT_COMMITTER_NAME: '@dhis2-bot'
-                  GIT_COMMITTER_EMAIL: 'apps@dhis2.org'
-                  NPM_TOKEN: ${{secrets.NPM_TOKEN}}
-                  GH_TOKEN: ${{secrets.GH_TOKEN}}
         env:
             CI: true

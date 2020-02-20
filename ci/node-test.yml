@@ -1,4 +1,4 @@
-name: 'DHIS2: Tests'
+name: 'dhis2-node test'
 
 on:
     push:

@@ -1,4 +1,4 @@
-name: 'DHIS2: Style'
+name: 'dhis2-node lint'
 
 on:
     push:

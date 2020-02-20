@@ -8,7 +8,7 @@
     "license": "MIT",
     "private": true,
     "devDependencies": {
-        "@dhis2/cli-style": "^5.1.0"
+        "@dhis2/cli-style": "^6.0.0"
     },
     "scripts": {
         "format": "d2-style text apply"
