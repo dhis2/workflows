@@ -1,7 +1,7 @@
 # For more options:
 # https://github.com/cypress-io/github-action
 
-name: 'dhis2-cypress'
+name: 'dhis2-cypress test'
 
 on:
     push:
@@ -15,8 +15,7 @@ env:
     CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
 
 jobs:
-    cypress-run:
-        name: E2E Tests
+    e2e:
         runs-on: ubuntu-latest
         if: "!contains(github.event.head_commit.message, '[skip ci]')"
         strategy:
