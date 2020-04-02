@@ -17,7 +17,7 @@ jobs:
 
             - name: Run linters
               run: |
-                  npx d2-style js check
-                  npx d2-style text check
+                  yarn d2-style js check
+                  yarn d2-style text check
         env:
             CI: true
