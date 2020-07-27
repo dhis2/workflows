@@ -5,7 +5,7 @@ name: 'dhis2: static analysis'
 # with:                               
 #   projectBaseDir: my-custom-directory
 #
-# In the base directory, the file .sonarcloud.properties must exist with the following properties:
+# In the base directory, the file sonar-project.properties must exist with the following properties:
 #
 # sonar.organization=<replace with your SonarCloud organization key>
 # sonar.projectKey=<replace with the key generated when setting up the project on SonarCloud>
