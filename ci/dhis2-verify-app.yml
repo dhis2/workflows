@@ -67,7 +67,9 @@ jobs:
             - uses: actions/upload-artifact@v2
               with:
                   name: app-build
-                  path: '**/build'
+                  path: |
+                      **/build
+                      !node_modules
                   retention-days: 1
 
     lint:
