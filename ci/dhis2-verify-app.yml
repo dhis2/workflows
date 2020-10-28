@@ -131,8 +131,6 @@ jobs:
                   name: app-build
 
             - uses: dhis2/deploy-build@master
-              env:
-                  INPUT_BUILD_DIR: build/app
               with:
                   # uncomment following line for monorepo apps:
                   #cwd: ./packages/app
