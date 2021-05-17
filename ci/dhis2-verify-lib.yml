@@ -94,16 +94,6 @@ jobs:
             - name: Test
               run: yarn test
 
-    #cypress_id:
-    #    runs-on: ubuntu-latest
-    #    outputs:
-    #        ci_build_id: ${{ steps.ci_build_id.outputs.value }}
-    #
-    #    steps:
-    #        - name: Generate cypress build id
-    #          id: ci_build_id
-    #          run: echo "::set-output name=value::$GITHUB_SHA-$(date +"%s")"
-
     #e2e:
     #    runs-on: ubuntu-latest
     #    if: "!github.event.push.repository.fork && github.actor != 'dependabot[bot]'"
@@ -137,7 +127,6 @@ jobs:
     #        - name: End-to-End tests
     #          uses: cypress-io/github-action@v2
     #          with:
-    #              ci-build-id: '${{ needs.cypress_id.outputs.ci_build_id }}'
     #              install: false
     #              record: true
     #              parallel: true
@@ -149,6 +138,7 @@ jobs:
     #              tag: ${{ github.event_name }}
     #          env:
     #              CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+    #              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     #              COMMIT_INFO_MESSAGE: ${{ github.event.pull_request.title }}
     #              STORYBOOK_TESTING: true
     #              SERVER_START_CMD: 'yarn cy:server'
