@@ -45,7 +45,7 @@ jobs:
         run: yarn install --frozen-lockfile
 
       - name: Build
-        run: yarn build:standalone
+        run: yarn build
 
       - name: Deploy
         id: netlify-deploy
