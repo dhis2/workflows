@@ -19,6 +19,11 @@ name: "dhis2: pr preview"
 # - Org secrets: DHIS2_BOT_NETLIFY_TOKEN
 # - Repo secrets: NETLIFY_SITE_ID
 # - Customize the 'jobs.build.steps.netlify-deploy.publish-dir' property
+#
+# Caveats:
+#
+# - To trigger another preview build: remove the "preview" label and add
+#   it back.
 
 on:
   pull_request:
