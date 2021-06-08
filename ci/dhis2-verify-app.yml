@@ -69,11 +69,11 @@ jobs:
     #e2e:
     #    runs-on: ubuntu-latest
     #    if: "!github.event.push.repository.fork && github.actor != 'dependabot[bot]'"
-    #    needs: [cypress_id]
     #
     #    strategy:
+    #        fail-fast: false
     #        matrix:
-    #            containers: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    #            containers: [1, 2, 3, 4]
     #
     #    steps:
     #        - name: Checkout
@@ -83,31 +83,22 @@ jobs:
     #          with:
     #              node-version: 12.x
     #
-    #        - uses: c-hive/gha-yarn-cache@v1
-    #        - run: yarn install --frozen-lockfile
-    #
-    #        - name: Install Cypress binary
-    #          run: yarn cypress install
-    #
     #        - name: End-to-End tests
     #          uses: cypress-io/github-action@v2
     #          with:
-    #              install: false
+    #              # This should be a command that serves the app.
+    #              start: yarn d2-app-scripts start
+    #              wait-on: 'http://localhost:3000'
+    #              wait-on-timeout: 300
     #              record: true
     #              parallel: true
-    #              start: ${{ env.SERVER_START_CMD }}
-    #              wait-on: ${{ env.SERVER_URL }}
-    #              wait-on-timeout: 300
-    #              cache-key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-    #              group: 'e2e'
-    #              tag: ${{ github.event_name }}
     #          env:
-    #              CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+    #              BROWSER: none
     #              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    #              COMMIT_INFO_MESSAGE: ${{ github.event.pull_request.title }}
-    #              STORYBOOK_TESTING: true
-    #              SERVER_START_CMD: 'yarn cy:server'
-    #              SERVER_URL: 'http://localhost:5001'
+    #              CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+    #              CYPRESS_dhis2BaseUrl: https://debug.dhis2.org/dev
+    #              CYPRESS_dhis2ApiVersion: 37
+    #              CYPRESS_networkMode: stub
 
     publish:
         runs-on: ubuntu-latest
