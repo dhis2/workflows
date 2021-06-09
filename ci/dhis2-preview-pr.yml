@@ -34,7 +34,7 @@ concurrency:
     cancel-in-progress: true
 
 jobs:
-  build:
+  preview:
     runs-on: ubuntu-latest
     if: "github.event.label.name == 'preview' && !github.event.push.repository.fork && github.actor != 'dependabot[bot]'"
     steps:
