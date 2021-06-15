@@ -47,7 +47,7 @@ jobs:
       - run: yarn install --frozen-lockfile
 
       - name: Build
-        run: yarn build
+        run: yarn d2-app-scripts build --standalone
 
       - name: Deploy
         id: netlify-deploy
