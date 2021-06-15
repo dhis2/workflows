@@ -58,7 +58,7 @@ jobs:
           deploy-message: ${{ github.event.pull_request.title }}
           enable-pull-request-comment: true
           enable-commit-comment: false
-          alias: deploy-preview-${{ github.event.number }}
+          alias: pr-${{ github.event.number }}
           # customize according to project needs
           #publish-dir: 'build/app'
         env:
