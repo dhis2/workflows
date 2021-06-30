@@ -29,7 +29,7 @@ jobs:
             - run: yarn install --frozen-lockfile
 
             - name: Build
-              run: yarn build
+              run: yarn d2-app-scripts build
 
             - uses: actions/upload-artifact@v2
               with:
@@ -51,7 +51,7 @@ jobs:
             - run: yarn install --frozen-lockfile
 
             - name: Lint
-              run: yarn lint
+              run: yarn d2-style check
 
     test:
         runs-on: ubuntu-latest
@@ -66,7 +66,7 @@ jobs:
             - run: yarn install --frozen-lockfile
 
             - name: Test
-              run: yarn test
+              run: yarn d2-app-scripts test
 
     #e2e:
     #    runs-on: ubuntu-latest
@@ -123,5 +123,4 @@ jobs:
               with:
                   name: lib-build
 
-            - name: Publish to NPM
-              run: npx @dhis2/cli-utils release --publish npm
+            - run: npx @dhis2/cli-utils release --publish npm
