@@ -30,7 +30,7 @@ jobs:
             - run: yarn install --frozen-lockfile
 
             - name: Lint
-              run: yarn lint
+              run: yarn d2-style check
 
     test:
         runs-on: ubuntu-latest
@@ -44,7 +44,7 @@ jobs:
             - run: yarn install --frozen-lockfile
 
             - name: Test
-              run: yarn test
+              run: yarn d2-app-scripts test
 
     publish:
         runs-on: ubuntu-latest
@@ -61,5 +61,4 @@ jobs:
             - uses: c-hive/gha-yarn-cache@v1
             - run: yarn install --frozen-lockfile
 
-            - name: Publish to NPM
-              run: npx @dhis2/cli-utils release --publish npm
+            - run: npx @dhis2/cli-utils release --publish npm
