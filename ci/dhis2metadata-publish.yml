@@ -1,40 +1,40 @@
 name: 'dhis2-metadata: publish package'
 
 on:
-  push:
-    tags:
-      - '**'
+    push:
+        tags:
+            - '**'
 
-  # Enable button for manual trigger
-  workflow_dispatch:
+    # Enable button for manual trigger
+    workflow_dispatch:
 
 jobs:
-  prepare:
-    runs-on: ubuntu-latest
-    outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
-    steps:
-      - uses: actions/checkout@v2
-      - name: 'Set matrix'
-        id: set-matrix
-        uses: dhis2-metadata/prepare@master
+    prepare:
+        runs-on: ubuntu-latest
+        outputs:
+            matrix: ${{ steps.set-matrix.outputs.matrix }}
+        steps:
+            - uses: actions/checkout@v2
+            - name: 'Set matrix'
+              id: set-matrix
+              uses: dhis2-metadata/prepare@master
 
-  publish:
-    needs: prepare
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        files: ${{ fromJson(needs.prepare.outputs.matrix) }}
-    steps:
-      - uses: actions/checkout@v2
-      - name: 'Upload package'
-        uses: prewk/s3-cp-action@master
-        with:
-          args: --acl public-read
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.BOT_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.BOT_SECRET_KEY }}
-          AWS_S3_BUCKET: ${{ secrets.S3_BUCKET }}
-          AWS_REGION: ${{ secrets.AWS_REGION }}
-          SOURCE: ${{ matrix.files.source }}
-          DEST: "s3://${{ secrets.S3_BUCKET }}/${{ matrix.files.destination }}"
+    publish:
+        needs: prepare
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                files: ${{ fromJson(needs.prepare.outputs.matrix) }}
+        steps:
+            - uses: actions/checkout@v2
+            - name: 'Upload package'
+              uses: prewk/s3-cp-action@master
+              with:
+                  args: --acl public-read
+              env:
+                  AWS_ACCESS_KEY_ID: ${{ secrets.BOT_ACCESS_KEY }}
+                  AWS_SECRET_ACCESS_KEY: ${{ secrets.BOT_SECRET_KEY }}
+                  AWS_S3_BUCKET: ${{ secrets.S3_BUCKET }}
+                  AWS_REGION: ${{ secrets.AWS_REGION }}
+                  SOURCE: ${{ matrix.files.source }}
+                  DEST: 's3://${{ secrets.S3_BUCKET }}/${{ matrix.files.destination }}'

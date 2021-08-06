@@ -11,7 +11,7 @@ env:
     GIT_COMMITTER_NAME: '@dhis2-bot'
     GIT_COMMITTER_EMAIL: 'apps@dhis2.org'
     GH_TOKEN: ${{secrets.DHIS2_BOT_GITHUB_TOKEN}}
-    CI: true
+    APPHUB_TOKEN: ${{secrets.DHIS2_BOT_APPHUB_TOKEN}}
     D2_VERBOSE: true
 
 jobs:
@@ -126,7 +126,16 @@ jobs:
               with:
                   name: app-build
 
-            - run: npx @dhis2/cli-utils release --publish app-hub
+            # ensure that d2-app-scripts is available
+            - uses: c-hive/gha-yarn-cache@v1
+            - run: yarn install --frozen-lockfile
+
+            - uses: dhis2/action-semantic-release@master
+              with:
+                  publish-apphub: true
+                  publish-github: true
+                  github-token: ${{ env.GH_TOKEN }}
+                  apphub-token: ${{ env.APPHUB_TOKEN }}
 
             - uses: dhis2/deploy-build@master
               with:

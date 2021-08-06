@@ -14,7 +14,6 @@ env:
     GIT_COMMITTER_EMAIL: 'apps@dhis2.org'
     NPM_TOKEN: ${{secrets.DHIS2_BOT_NPM_TOKEN}}
     GH_TOKEN: ${{secrets.DHIS2_BOT_GITHUB_TOKEN}}
-    CI: true
 
 jobs:
     lint:
@@ -60,4 +59,9 @@ jobs:
             - uses: c-hive/gha-yarn-cache@v1
             - run: yarn install --frozen-lockfile
 
-            - run: npx @dhis2/cli-utils release --publish npm
+            - uses: dhis2/action-semantic-release@master
+              with:
+                  publish-npm: true
+                  publish-github: true
+                  github-token: ${{ env.GH_TOKEN }}
+                  npm-token: ${{ env.NPM_TOKEN }}
