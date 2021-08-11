@@ -2,8 +2,11 @@ name: 'dhis2: pr preview'
 
 # Requirements:
 #
-# - Org secrets: DHIS2_BOT_NETLIFY_TOKEN
-# - Repo secrets: NETLIFY_SITE_ID
+# - Org secrets:
+#       DHIS2_BOT_NETLIFY_TOKEN
+#       DHIS2_BOT_GITHUB_TOKEN
+# - Repo secrets:
+#       NETLIFY_SITE_ID
 # - Customize the 'jobs.build.steps.netlify-deploy.publish-dir' property
 
 on:
@@ -34,7 +37,7 @@ jobs:
               uses: nwtgck/actions-netlify@v1.1
               timeout-minutes: 1
               with:
-                  github-token: ${{ secrets.GITHUB_TOKEN }}
+                  github-token: ${{ secrets.DHIS2_BOT_GITHUB_TOKEN }}
                   deploy-message: ${{ github.event.pull_request.title }}
                   enable-pull-request-comment: true
                   enable-commit-comment: false
