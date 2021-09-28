@@ -47,7 +47,15 @@ jobs:
               run: yarn lint
             # ODOT
 
-            - name: Publish to NPM
-              run: npx @dhis2/cli-utils release --publish npm
+            - uses: c-hive/gha-yarn-cache@v1
+            - run: yarn install --frozen-lockfile
+
+            - uses: dhis2/action-semantic-release@master
+              with:
+                  publish-npm: true
+                  publish-github: true
+                  github-token: ${{ env.GH_TOKEN }}
+                  npm-token: ${{ env.NPM_TOKEN }}
+
         env:
             CI: true
