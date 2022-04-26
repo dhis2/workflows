@@ -34,20 +34,6 @@ jobs:
             - name: Lint
               run: yarn d2-style check
 
-    commitlint:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v2
-              with:
-                  fetch-depth: 0
-            - uses: c-hive/gha-yarn-cache@v1
-            - run: yarn install --frozen-lockfile
-            - id: commitlint
-              run: echo ::set-output name=config_path::$(node -e "process.stdout.write(require('@dhis2/cli-style').config.commitlint)")
-            - uses: wagoid/commitlint-github-action@v4
-              with:
-                  configFile: ${{ steps.commitlint.outputs.config_path }}
-
     test:
         runs-on: ubuntu-latest
         steps:
