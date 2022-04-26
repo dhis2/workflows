@@ -125,7 +125,7 @@ jobs:
 
     publish:
         runs-on: ubuntu-latest
-        needs: [build, lint, test] # add e2e if in use
+        needs: [build, lint, commitlint, test] # add e2e if in use
         if: "!github.event.push.repository.fork && github.actor != 'dependabot[bot]'"
         steps:
             - uses: actions/checkout@v2
