@@ -70,10 +70,20 @@ jobs:
             - name: Test
               run: yarn d2-app-scripts test
 
+    #cypress_id:
+    #    runs-on: ubuntu-latest
+    #    outputs:
+    #        ci_build_id: ${{ steps.ci_build_id.outputs.value }}
+    #
+    #    steps:
+    #        - name: Generate cypress build id
+    #          id: ci_build_id
+    #          run: echo "::set-output name=value::$GITHUB_SHA-$(date +"%s")"
+    #
     #e2e:
     #    runs-on: ubuntu-latest
     #    if: "!github.event.push.repository.fork && github.actor != 'dependabot[bot]'"
-    #    needs: [build]
+    #    needs: [cypress_id, build]
     #
     #    strategy:
     #        fail-fast: false
@@ -95,6 +105,7 @@ jobs:
     #        - name: End-to-End tests
     #          uses: cypress-io/github-action@v2
     #          with:
+    #              ci-build-id: '${{ needs.cypress_id.outputs.ci_build_id }}'
     #              # This should be a command that starts the server to test against.
     #              start: yarn start
     #              wait-on: 'http://localhost:3000'
