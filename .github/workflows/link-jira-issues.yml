@@ -1,9 +1,6 @@
 name: DHIS2 Jira  Automation
 on:
-  workflow_call:
-    secrets:
-      GITHUB_TOKEN:
-        required: true
+  workflow_call
 
 permissions:
   contents: read
