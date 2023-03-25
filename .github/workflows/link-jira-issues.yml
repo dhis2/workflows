@@ -1,0 +1,21 @@
+name: DHIS2 Jira  Automation
+on:
+  workflow_call:
+    secrets:
+      GITHUB_TOKEN:
+        required: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  check:
+    name: Link Jira issues
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Link DHIS2 Jira issues
+      uses: dhis2/action-dhis2-jira-automation@main
+      with:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
