@@ -27,7 +27,6 @@ jobs:
               with:
                   node-version: 16
 
-            - uses: c-hive/gha-yarn-cache@v1
             - run: yarn install --frozen-lockfile
 
             - name: Build
@@ -49,7 +48,6 @@ jobs:
               with:
                   node-version: 16
 
-            - uses: c-hive/gha-yarn-cache@v1
             - run: yarn install --frozen-lockfile
 
             - name: Lint
@@ -64,7 +62,6 @@ jobs:
               with:
                   node-version: 16
 
-            - uses: c-hive/gha-yarn-cache@v1
             - run: yarn install --frozen-lockfile
 
             - name: Test
@@ -126,7 +123,6 @@ jobs:
                   name: lib-build
 
             # ensure that d2-app-scripts is available
-            - uses: c-hive/gha-yarn-cache@v1
             - run: yarn install --frozen-lockfile
 
             - uses: dhis2/action-semantic-release@master

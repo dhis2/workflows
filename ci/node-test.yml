@@ -15,7 +15,6 @@ jobs:
               with:
                   node-version: 16
 
-            - uses: c-hive/gha-yarn-cache@v1
             - run: yarn install --frozen-lockfile
 
             - name: Test

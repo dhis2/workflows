@@ -33,7 +33,6 @@ jobs:
               with:
                   node-version: 16
 
-            - uses: c-hive/gha-yarn-cache@v1
             - run: yarn install --frozen-lockfile
 
             # TODO: Customize these steps as needed
@@ -47,7 +46,6 @@ jobs:
               run: yarn lint
             # ODOT
 
-            - uses: c-hive/gha-yarn-cache@v1
             - run: yarn install --frozen-lockfile
 
             - uses: dhis2/action-semantic-release@master
