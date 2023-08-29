@@ -32,7 +32,7 @@ on:
                 required: false
 
 env:
-    BASE_URL_INSTANCES: https://test.e2e.dhis2.org
+    BASE_URL_INSTANCES: https://debug.dhis2.org
     NAME_PATTERN_PROD_INSTANCES: '{version}'
     NAME_PATTERN_DEV_INSTANCE: dev
 
