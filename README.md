@@ -25,9 +25,9 @@ on: [push, pull_request]  # or any other GitHub event
 
 jobs:
     e2e-tests:
-        uses: dhis2/workflows/.github/workflows/cypress-e2e-tests.yml@main
+        uses: dhis2/workflows/.github/workflows/analytics-e2e-tests.yml@main
         secrets:
-            baseurl: ${{ secrets.BASEURL }}
+            baseurl: ${{ secrets.BASEURL }}   # e.g. BASEURL = https://test.e2e.dhis2.org/analytics-dev
             username: ${{ secrets.USERNAME }}
             password: ${{ secrets.PASSWORD }}
             recordkey: ${{ secrets.RECORDKEY }}
