@@ -70,6 +70,8 @@ jobs:
     e2e-prod:
         needs: compute-prod-versions
         runs-on: ubuntu-latest
+        env:
+            CI_BUILD_ID: ${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}
         strategy:
             fail-fast: false
             matrix:
