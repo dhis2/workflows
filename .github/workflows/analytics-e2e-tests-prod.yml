@@ -16,8 +16,6 @@ name: 'e2e-prod'
 on:
     workflow_call:
         secrets:
-            baseurl:
-                required: true
             username:
                 required: true
             password:
@@ -32,9 +30,9 @@ on:
                 required: false
 
 env:
-    BASE_URL_INSTANCES: https://debug.dhis2.org
-    NAME_PATTERN_PROD_INSTANCES: '{version}'
-    NAME_PATTERN_DEV_INSTANCE: dev
+    BASE_URL_INSTANCES: https://test.e2e.dhis2.org
+    NAME_PATTERN_PROD_INSTANCES: 'analytics-{version}'
+    DEV_INSTANCE: https://test.e2e.dhis2.org/analytics-dev
 
 concurrency:
     group: e2e-prod-${{ github.workflow}}-${{ github.ref }}
@@ -45,25 +43,33 @@ defaults:
         shell: bash
 
 jobs:
+    compute-dev-version:
+        runs-on: ubuntu-latest
+        outputs:
+            version: ${{ steps.dev-version.outputs.version }}
+        steps:
+            - name: Output dev version
+              id: dev-version
+              uses: dhis2/action-instance-version@v1
+              with:
+                  instance-url: ${ DEV_INSTANCE }
+                  username: ${{ secrets.username }}
+                  password: ${{ secrets.password }}
+
     compute-prod-versions:
         runs-on: ubuntu-latest
+        needs: compute-dev-version
         outputs:
             versions: ${{ steps.prod-versions.outputs.versions }}
         steps:
-            - name: Compute dev instance url
-              id: instance-url
-              run: |
-                  url=${BASE_URL_INSTANCES%/}/${NAME_PATTERN_DEV_INSTANCE/"{version}"/dev}
-                  echo "url=$url" >> $GITHUB_OUTPUT
-                  echo "url: $url"
-
-            - uses: actions/checkout@v3
+            - name: Checkout
+              uses: actions/checkout@v3
 
             - name: Output prod version urls
               id: prod-versions
               uses: dhis2/action-supported-legacy-versions@v1
               with:
-                  instance-url-latest: ${{ steps.instance-url.outputs.url }} # can be removed if maxDHIS2Version has been specified
+                  instance-url-latest: ${{ needs.compute-dev-version.outputs.version }} # can be removed if maxDHIS2Version has been specified
                   username: ${{ secrets.username }}
                   password: ${{ secrets.password }}
 
