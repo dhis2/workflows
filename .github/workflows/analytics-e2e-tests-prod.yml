@@ -5,7 +5,6 @@ name: 'e2e-prod'
 # - Customize environment variables:
 #     BASE_URL_INSTANCES: Set the base url for the instances, e.g. https://test.e2e.dhis2.org
 #     NAME_PATTERN_PROD_INSTANCES: Set the name pattern for your instances. {version} will be replaced by "[majorVersion].[minorVersion]"
-#     NAME_PATTERN_DEV_INSTANCE: Set the name pattern for your dev instance. {version} will be replaced by "dev"
 #
 # - Other optional customizations:
 #     containers: Set the matrix containers array for the e2e-prod job. The number of parallel Cypress instances running for each backend version will equal the array length.
@@ -32,7 +31,6 @@ on:
 env:
     BASE_URL_INSTANCES: https://test.e2e.dhis2.org
     NAME_PATTERN_PROD_INSTANCES: 'analytics-{version}'
-    DEV_INSTANCE: https://test.e2e.dhis2.org/analytics-dev
 
 concurrency:
     group: e2e-prod-${{ github.workflow}}-${{ github.ref }}
@@ -52,7 +50,7 @@ jobs:
               id: dev-version
               uses: dhis2/action-instance-version@v1
               with:
-                  instance-url: ${ DEV_INSTANCE }
+                  instance-url: https://test.e2e.dhis2.org/analytics-dev
                   username: ${{ secrets.username }}
                   password: ${{ secrets.password }}
 
