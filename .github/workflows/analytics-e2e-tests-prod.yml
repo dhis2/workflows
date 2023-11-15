@@ -5,7 +5,6 @@ name: 'e2e-prod'
 # - Customize environment variables:
 #     BASE_URL_INSTANCES: Set the base url for the instances, e.g. https://test.e2e.dhis2.org
 #     NAME_PATTERN_PROD_INSTANCES: Set the name pattern for your instances. {version} will be replaced by "[majorVersion].[minorVersion]"
-#     NAME_PATTERN_DEV_INSTANCE: Set the name pattern for your dev instance. {version} will be replaced by "dev"
 #
 # - Other optional customizations:
 #     containers: Set the matrix containers array for the e2e-prod job. The number of parallel Cypress instances running for each backend version will equal the array length.
@@ -16,8 +15,6 @@ name: 'e2e-prod'
 on:
     workflow_call:
         secrets:
-            baseurl:
-                required: true
             username:
                 required: true
             password:
@@ -32,9 +29,8 @@ on:
                 required: false
 
 env:
-    BASE_URL_INSTANCES: https://debug.dhis2.org
-    NAME_PATTERN_PROD_INSTANCES: '{version}'
-    NAME_PATTERN_DEV_INSTANCE: dev
+    BASE_URL_INSTANCES: https://test.e2e.dhis2.org
+    NAME_PATTERN_PROD_INSTANCES: 'analytics-{version}'
 
 concurrency:
     group: e2e-prod-${{ github.workflow}}-${{ github.ref }}
@@ -50,20 +46,14 @@ jobs:
         outputs:
             versions: ${{ steps.prod-versions.outputs.versions }}
         steps:
-            - name: Compute dev instance url
-              id: instance-url
-              run: |
-                  url=${BASE_URL_INSTANCES%/}/${NAME_PATTERN_DEV_INSTANCE/"{version}"/dev}
-                  echo "url=$url" >> $GITHUB_OUTPUT
-                  echo "url: $url"
-
-            - uses: actions/checkout@v3
+            - name: Checkout
+              uses: actions/checkout@v3
 
             - name: Output prod version urls
               id: prod-versions
               uses: dhis2/action-supported-legacy-versions@v1
               with:
-                  instance-url-latest: ${{ steps.instance-url.outputs.url }} # can be removed if maxDHIS2Version has been specified
+                  instance-url-latest: https://test.e2e.dhis2.org/analytics-dev # can be removed if maxDHIS2Version has been specified
                   username: ${{ secrets.username }}
                   password: ${{ secrets.password }}
 
