@@ -97,9 +97,8 @@ jobs:
                   wait-on: 'http://localhost:3000'
                   wait-on-timeout: 300
                   record: false
-                  parallel: true
+                  parallel: flase
                   browser: chrome
-                  group: e2e-chrome-parallel-${{ matrix.versions }}
               env:
                   CI: true
                   BROWSER: none
