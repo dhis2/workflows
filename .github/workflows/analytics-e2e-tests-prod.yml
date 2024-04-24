@@ -102,9 +102,10 @@ jobs:
                   wait-on: 'http://localhost:3000'
                   wait-on-timeout: 300
                   record: ${{ inputs.should_record }}
-                  parallel: true
+                  parallel: ${{ inputs.should_record }}
                   browser: chrome
-                  group: e2e-chrome-parallel-${{ matrix.versions }}
+                  group: ${{ inputs.should_record && format('e2e-chrome-parallel-{0}', matrix.versions) }}
+                  ci-build-id: ${{ inputs.should_record && github.run_id }}
               env:
                   CI: true
                   BROWSER: none
