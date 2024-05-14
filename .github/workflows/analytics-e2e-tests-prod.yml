@@ -18,7 +18,10 @@ on:
             should_record:
                 required: false
                 type: boolean
-                default: true
+                default: false
+            spec-group:
+                required: false
+                type: string
         secrets:
             username:
                 required: true
@@ -38,7 +41,7 @@ env:
     NAME_PATTERN_PROD_INSTANCES: 'analytics-{version}'
 
 concurrency:
-    group: e2e-prod-${{ github.workflow}}-${{ github.ref }}
+    group: e2e-prod-${{ github.workflow }}-${{ github.ref }}
     cancel-in-progress: true
 
 defaults:
@@ -74,7 +77,7 @@ jobs:
             fail-fast: false
             matrix:
                 versions: ${{ fromJSON(needs.compute-prod-versions.outputs.versions) }}
-                containers: [1, 2, 3, 4]
+                spec-group: ${{ fromJson(inputs.spec-group) }}
         steps:
             - uses: actions/checkout@v3
             - uses: actions/setup-node@v3
@@ -95,6 +98,20 @@ jobs:
               env:
                   version: ${{ matrix.versions }}
 
+            - name: Debug spec-group and should_record
+              run: |
+                echo "spec-group: ${{ toJson(matrix.spec-group) }}"
+                echo "should_record: ${{ inputs.should_record }}"
+
+            - name: Debug Test Parameters
+              run: |
+                echo "Record: ${{ inputs.should_record }}"
+                echo "Parallel: ${{ inputs.should_record }}"
+                echo "Browser: chrome"
+                echo "Specs: ${{ join(matrix.spec-group.tests, ',') }}"
+                echo "Group: ${{ inputs.should_record && format('e2e-chrome-parallel-{0}-{1}', matrix.versions, matrix.spec-group.id) || '' }}"
+                echo "CI Build ID: ${{ inputs.should_record && github.run_id || '' }}"
+
             - name: Run e2e tests
               uses: cypress-io/github-action@v5
               with:
@@ -104,14 +121,15 @@ jobs:
                   record: ${{ inputs.should_record }}
                   parallel: ${{ inputs.should_record }}
                   browser: chrome
-                  group: ${{ inputs.should_record && format('e2e-chrome-parallel-{0}', matrix.versions) }}
-                  ci-build-id: ${{ inputs.should_record && github.run_id }}
+                  spec: ${{ join(matrix.spec-group.tests, ',') }}
+                  group: ${{ inputs.should_record && format('e2e-chrome-parallel-{0}-{1}', matrix.versions, matrix.spec-group.id) || '' }}
+                  ci-build-id: ${{ inputs.should_record && github.run_id || '' }}
               env:
                   CI: true
                   BROWSER: none
                   CYPRESS_RECORD_KEY: ${{ secrets.recordkey }}
                   CYPRESS_dhis2BaseUrl: ${{ steps.instance-url.outputs.url }}
-                  CYPRESS_dhis2InstanceVersion: ${{matrix.versions}}
+                  CYPRESS_dhis2InstanceVersion: ${{ matrix.versions }}
                   CYPRESS_dhis2Username: ${{ secrets.username }}
                   CYPRESS_dhis2Password: ${{ secrets.password }}
                   CYPRESS_networkMode: live
