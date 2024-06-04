@@ -1,0 +1,109 @@
+name: 'dhis2: e2e tests'
+
+# Requirements:
+#
+# - Secrets:
+#     GITHUB_TOKEN
+#     CYPRESS_RECORD_KEY
+#     CYPRESS_DHIS2_USERNAME
+#     CYPRESS_DHIS2_PASSWORD
+#
+# - Customize environment variables:
+#     BASE_URL_INSTANCES: Set the base url for the instances, e.g. https://test.e2e.dhis2.org
+#     NAME_PATTERN_LEGACY_INSTANCES: Set the name pattern for your instances. {version} will be replaced by "[majorVersion].[minorVersion]"
+#     NAME_PATTERN_DEV_INSTANCE: Set the name pattern for your dev instance. {version} will be replaced by "dev"
+#
+# - Other optional customizations:
+#     containers: Set the matrix containers array for the cypress job. The number of parallel Cypress instances running for each backend version will equal the array length.
+#
+# - Set status check as required:
+#     We recommend setting "e2e-tests-success"  as a required step in your workflow.
+
+on:
+    pull_request:
+        types: [opened, synchronize, reopened, ready_for_review]
+
+env:
+    BASE_URL_INSTANCES: https://test.e2e.dhis2.org
+    NAME_PATTERN_LEGACY_INSTANCES: '{version}dev'
+    NAME_PATTERN_DEV_INSTANCE: dev
+
+concurrency:
+    group: ${{ github.workflow}}-${{ github.ref }}
+    cancel-in-progress: true
+
+defaults:
+    run:
+        shell: bash
+
+jobs:
+    compute-versions:
+        if: '!github.event.pull_request.draft && !github.event.pull_request.head.repo.fork'
+        runs-on: ubuntu-latest
+        outputs:
+            versions: ${{ steps.legacy-versions.outputs.versions }}
+        steps:
+            - name: compute-instance-url
+              id: instance-url
+              run: |
+                  url=${BASE_URL_INSTANCES%/}/${NAME_PATTERN_DEV_INSTANCE/"{version}"/dev}
+                  echo "url=$url" >> $GITHUB_OUTPUT
+                  echo "url: $url"
+
+            - uses: actions/checkout@v3
+
+            - id: legacy-versions
+              uses: dhis2/action-supported-legacy-versions@v1
+              with:
+                  instance-url-latest: ${{ steps.instance-url.outputs.url }} # can be removed if maxDHIS2Version has been specified
+                  username: ${{ secrets.CYPRESS_DHIS2_USERNAME }} # can be removed if maxDHIS2Version has been specified
+                  password: ${{ secrets.CYPRESS_DHIS2_PASSWORD }} # can be removed if maxDHIS2Version has been specified
+
+    cypress:
+        needs: compute-versions
+        runs-on: ubuntu-latest
+        container: cypress/browsers:node16.17.0-chrome106
+        strategy:
+            fail-fast: false
+            matrix:
+                versions: ${{ fromJSON(needs.compute-versions.outputs.versions) }}
+                containers: [1, 2, 3, 4, 5, 6]
+        steps:
+            - uses: actions/checkout@v3
+
+            - name: compute-instance-url
+              id: instance-url
+              run: |
+                  url=${BASE_URL_INSTANCES%/}/${NAME_PATTERN_LEGACY_INSTANCES/"{version}"/$version}
+                  echo "url=$url" >> $GITHUB_OUTPUT
+                  echo "url: $url"
+              env:
+                  version: ${{ matrix.versions }}
+
+            - name: Cypress run
+              uses: cypress-io/github-action@v4
+              with:
+                  record: true
+                  parallel: true
+                  group: e2e-chrome-parallel-${{ matrix.versions }}
+                  browser: chrome
+                  start: yarn d2-app-scripts start
+                  wait-on: http://localhost:3000
+                  wait-on-timeout: 300
+              env:
+                  CI: true
+                  CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  CYPRESS_dhis2BaseUrl: ${{ steps.instance-url.outputs.url }}
+                  CYPRESS_dhis2InstanceVersion: ${{matrix.versions}}
+                  CYPRESS_dhis2Username: ${{ secrets.CYPRESS_DHIS2_USERNAME }}
+                  CYPRESS_dhis2Password: ${{ secrets.CYPRESS_DHIS2_PASSWORD }}
+
+    e2e-tests-success:
+        needs: cypress
+        if: ${{ success() || failure() }}
+        runs-on: ubuntu-latest
+        steps:
+            - run: if [ $result != 'success' ]; then exit 1; fi;
+              env:
+                  result: ${{ needs.cypress.result }}
