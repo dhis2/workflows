@@ -13,6 +13,9 @@ on:
             instance_url:
                 required: true
                 type: string
+            dhis2_version:
+                required: true
+                type: string
         secrets:
             username:
                 required: true
@@ -64,7 +67,7 @@ jobs:
                   echo "Record: ${{ inputs.should_record }}"
                   echo "Parallel: ${{ inputs.should_record }}"
                   echo "Specs: ${{ join(matrix.spec-group.tests, ',') }}"
-                  echo "Group: ${{ inputs.should_record && format('e2e-chrome-parallel-{0}-{1}', matrix.versions, matrix.spec-group.id) || '' }}"
+                  echo "Group: ${{ inputs.should_record && format('e2e-chrome-parallel-{0}', matrix.spec-group.id) || '' }}"
                   echo "CI Build ID: ${{ inputs.should_record && github.run_id || '' }}"
 
             - name: Run e2e tests
@@ -77,14 +80,14 @@ jobs:
                   parallel: ${{ inputs.should_record }}
                   browser: chrome
                   spec: ${{ join(matrix.spec-group.tests, ',') }}
-                  group: ${{ inputs.should_record && format('e2e-chrome-parallel-{0}-{1}', matrix.versions, matrix.spec-group.id) || '' }}
+                  group: ${{ inputs.should_record && format('e2e-chrome-parallel-{0}', matrix.spec-group.id) || '' }}
                   ci-build-id: ${{ inputs.should_record && github.run_id || '' }}
               env:
                   CI: true
                   BROWSER: none
                   CYPRESS_RECORD_KEY: ${{ secrets.recordkey }}
                   CYPRESS_dhis2BaseUrl: ${{ inputs.instance_url }}
-                  CYPRESS_dhis2InstanceVersion: ${{ matrix.versions }}
+                  CYPRESS_dhis2InstanceVersion: ${{ inputs.dhis2_version }}
                   CYPRESS_dhis2Username: ${{ secrets.username }}
                   CYPRESS_dhis2Password: ${{ secrets.password }}
                   CYPRESS_networkMode: live
