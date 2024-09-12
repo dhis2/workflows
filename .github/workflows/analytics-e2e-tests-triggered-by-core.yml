@@ -42,7 +42,6 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                versions: ${{ fromJSON(needs.compute-prod-versions.outputs.versions) }}
                 spec-group: ${{ fromJson(inputs.spec-group) }}
         steps:
             - uses: actions/checkout@v3
@@ -64,7 +63,6 @@ jobs:
               run: |
                   echo "Record: ${{ inputs.should_record }}"
                   echo "Parallel: ${{ inputs.should_record }}"
-                  echo "Browser: chrome"
                   echo "Specs: ${{ join(matrix.spec-group.tests, ',') }}"
                   echo "Group: ${{ inputs.should_record && format('e2e-chrome-parallel-{0}-{1}', matrix.versions, matrix.spec-group.id) || '' }}"
                   echo "CI Build ID: ${{ inputs.should_record && github.run_id || '' }}"
@@ -100,6 +98,4 @@ jobs:
         if: ${{ success() || failure() }}
         runs-on: ubuntu-latest
         steps:
-            - run: if [ $result != 'success' ]; then exit 1; fi;
-              env:
-                  result: ${{ needs.e2e-prod.result }}
+            - run: if [ "${{ needs.e2e-prod.result }}" != 'success' ]; then exit 1; fi;
