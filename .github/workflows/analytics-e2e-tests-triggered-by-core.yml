@@ -41,7 +41,7 @@ jobs:
             CI_BUILD_ID: ${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}
             BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
             PR_TITLE: ${{ github.event.pull_request.title }}
-            DHIS2_VERSION: ${{ matrix.versions }}
+            DHIS2_VERSION: ${{ inputs.dhis2_version }}
         strategy:
             fail-fast: false
             matrix:
