@@ -74,7 +74,7 @@ jobs:
               uses: cypress-io/github-action@v5
               with:
                   start: yarn d2-app-scripts start
-                  wait-on: 'http://localhost:3000'
+                  wait-on: ${{ inputs.instance_url }}
                   wait-on-timeout: 300
                   record: ${{ inputs.should_record }}
                   parallel: ${{ inputs.should_record }}
