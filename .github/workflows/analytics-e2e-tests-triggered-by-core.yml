@@ -47,7 +47,7 @@ jobs:
             matrix:
                 spec-group: ${{ fromJson(inputs.spec-group) }}
         steps:
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v4
             - uses: actions/setup-node@v3
               with:
                   node-version: 18.x
@@ -71,9 +71,9 @@ jobs:
                   echo "CI Build ID: ${{ inputs.should_record && github.run_id || '' }}"
 
             - name: Run e2e tests
-              uses: cypress-io/github-action@v5
+              uses: cypress-io/github-action@v6
               with:
-                  start: yarn d2-app-scripts start
+                  config: baseUrl=${{ inputs.instance_url }}
                   wait-on: ${{ inputs.instance_url }}
                   wait-on-timeout: 300
                   record: ${{ inputs.should_record }}
