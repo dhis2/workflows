@@ -73,7 +73,7 @@ jobs:
             - name: Run e2e tests
               uses: cypress-io/github-action@v6
               with:
-                  config: pageLoadTimeout=100000, baseUrl=${{ inputs.instance_url }}
+                  config: pageLoadTimeout=100000,baseUrl=${{ inputs.instance_url }}
                   wait-on: ${{ inputs.instance_url }}
                   wait-on-timeout: 300
                   record: ${{ inputs.should_record }}
