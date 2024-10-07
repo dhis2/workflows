@@ -59,11 +59,9 @@ jobs:
 
             - name: Output prod version urls
               id: prod-versions
-              uses: dhis2/action-supported-legacy-versions@v1
+              uses: dhis2/action-supported-legacy-versions@feat/support-hardcoded-max-version
               with:
-                  instance-url-latest: https://test.e2e.dhis2.org/analytics-dev # can be removed if maxDHIS2Version has been specified
-                  username: ${{ secrets.username }}
-                  password: ${{ secrets.password }}
+                  dev-version: "2.42"
 
     e2e-prod:
         needs: compute-prod-versions
