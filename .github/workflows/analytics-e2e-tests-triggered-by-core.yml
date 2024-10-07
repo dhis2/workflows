@@ -78,13 +78,12 @@ jobs:
                   wait-on-timeout: 300
                   record: ${{ inputs.should_record }}
                   parallel: ${{ inputs.should_record }}
-                  browser: chrome
+                  browser: electron
                   spec: ${{ join(matrix.spec-group.tests, ',') }}
                   group: ${{ inputs.should_record && format('e2e-chrome-parallel-{0}', matrix.spec-group.id) || '' }}
                   ci-build-id: ${{ inputs.should_record && github.run_id || '' }}
               env:
                   CI: true
-                  BROWSER: none
                   CYPRESS_RECORD_KEY: ${{ secrets.recordkey }}
                   CYPRESS_dhis2BaseUrl: ${{ inputs.instance_url }}
                   CYPRESS_dhis2InstanceVersion: ${{ inputs.dhis2_version }}
