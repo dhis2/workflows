@@ -60,10 +60,12 @@ jobs:
             - run: |
                   echo "BROWSER_PATH=$(which chrome)" >> $GITHUB_ENV
 
-            - name: Debug spec-group and should_record
+            - name: Normalize app_url
               run: |
-                  echo "spec-group: ${{ toJson(matrix.spec-group) }}"
-                  echo "should_record: ${{ inputs.should_record }}"
+                  echo "Original app_url: ${{ inputs.app_url }}"
+                  NORMALIZED_APP_URL=$(echo "${{ inputs.app_url }}" | sed 's:/*$::')
+                  echo "Normalized app_url: $NORMALIZED_APP_URL"
+                  echo "app_url=$NORMALIZED_APP_URL" >> $GITHUB_ENV
 
             - name: Debug Test Parameters
               run: |
@@ -72,11 +74,12 @@ jobs:
                   echo "Specs: ${{ join(matrix.spec-group.tests, ',') }}"
                   echo "Group: ${{ inputs.should_record && format('e2e-chrome-parallel-{0}', matrix.spec-group.id) || '' }}"
                   echo "CI Build ID: ${{ inputs.should_record && github.run_id || '' }}"
+                  echo "Normalized App URL: ${{ env.app_url }}"
 
             - name: Run e2e tests
               uses: cypress-io/github-action@v6
               with:
-                  config: pageLoadTimeout=100000,baseUrl=${{ inputs.app_url }}
+                  config: pageLoadTimeout=100000,baseUrl=${{ env.app_url }}
                   wait-on: ${{ inputs.api_base_url }}
                   wait-on-timeout: 300
                   record: ${{ inputs.should_record }}
