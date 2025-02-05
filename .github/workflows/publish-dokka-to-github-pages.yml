@@ -58,7 +58,7 @@ jobs:
       - name: Change wrapper permission
         run: chmod +x ./gradlew
 
-      - name: Build Java docs
+      - name: Build Dokka Html
         run: ./gradlew ${{ inputs.gradle_module }}:dokkaHtml ${{ inputs.gradle_args }}
 
       - name: Organize pages structure
