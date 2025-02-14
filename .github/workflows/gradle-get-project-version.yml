@@ -1,0 +1,53 @@
+name: Get version from Gradle-based project
+
+#
+# This workflow returns the version of a Gradle-based project by inspecting the :properties task.
+#
+# Requirements:
+# - The project must use Gradle as build system.
+
+on:
+    workflow_call:
+        inputs:
+            java_version:
+                description: "Java version to run gradle."
+                required: false
+                type: number
+                default: 17
+            gradle_args:
+                description: "Arguments to be passed to the gradle command line."
+                required: false
+                type: string
+                default: ""
+            gradle_module:
+                description: "The gradle module to use. Leave blank for root."
+                required: false
+                type: string
+        outputs:
+            version:
+                description: "Project version from Gradle version property"
+                value: ${{ jobs.get_version.outputs.version }}
+
+jobs:
+    get_version:
+        runs-on: ubuntu-latest
+        outputs:
+            version: ${{ steps.getVersion.outputs.version }}
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+            - name: Set up JDK ${{ inputs.java_version }}
+              uses: actions/setup-java@v4
+              with:
+                  java-version: ${{ inputs.java_version }}
+                  distribution: temurin
+                  cache: 'gradle'
+            - name: Change wrapper permission
+              run: chmod +x ./gradlew
+
+            - name: Get version
+              id: getVersion
+              run: |
+                  version_line=$(./gradlew ${{ inputs.gradle_module }}:properties ${{ inputs.gradle_args }} | grep -P "version:")
+                  version=$(echo $version_line | awk -F"version: " '{ print $2}')
+                  echo "version=$version" >> $GITHUB_OUTPUT
