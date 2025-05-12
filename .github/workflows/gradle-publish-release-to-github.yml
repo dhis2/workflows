@@ -1,0 +1,44 @@
+name: Publish Gradle-based project release to GitHub
+
+#
+# This workflow publish a new release to GitHub for a Gradle-based project.
+#
+# Requirements:
+# - The project must use Gradle as build system.
+
+on:
+    workflow_call:
+        inputs:
+            java_version:
+                description: "Java version to run gradle."
+                required: false
+                type: number
+                default: 17
+            gradle_args:
+                description: "Arguments to be passed to the gradle command line."
+                required: false
+                type: string
+                default: ""
+            gradle_module:
+                description: "The gradle module to use. Leave blank for root."
+                required: false
+                type: string
+
+jobs:
+    version:
+        uses: ./.github/workflows/gradle-get-project-version.yml
+        with:
+            java_version: ${{ inputs.java_version }}
+            gradle_args: ${{ inputs.gradle_args }}
+            gradle_module: ${{ inputs.gradle_module }}
+
+    publish:
+        runs-on: ubuntu-latest
+        needs: version
+        steps:
+            - uses: actions/checkout@v4
+
+            - uses: ncipollo/release-action@v1
+              with:
+                  generateReleaseNotes: true
+                  tag: v${{ needs.version.outputs.version }}

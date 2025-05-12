@@ -1,0 +1,83 @@
+name: Deploy Dokka Html docs to github pages
+
+#
+# This workflow automates the build and deployment of API documentation in Github pages.
+#
+# Requirements:
+# - The project must use Gradle as build system.
+# - The project must use Dokka as API documentation engine.
+# - In Github > Settings > Pages, the source must be configured to "Github actions".
+# - In Github > Settings > Environments, the running branch must be allowed to deploy to "github-pages" environment.
+
+on:
+  workflow_call:
+    inputs:
+      java_version:
+        description: "Java version to run gradle."
+        required: false
+        type: number
+        default: 17
+      gradle_args:
+        description: "Arguments to be passed to the gradle command line."
+        required: false
+        type: string
+        default: ""
+      gradle_module:
+        description: "The gradle module to build the documentation. Leave blank for root."
+        required: false
+        type: string
+      output_folder:
+        description: "The folder in github pages to upload the docs. Leave blank for root."
+        required: false
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Set up JDK ${{ inputs.java_version }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ inputs.java_version }}
+          distribution: temurin
+          cache: 'gradle'
+      - name: Change wrapper permission
+        run: chmod +x ./gradlew
+
+      - name: Build Dokka Html
+        run: ./gradlew ${{ inputs.gradle_module }}:dokkaHtml ${{ inputs.gradle_args }}
+
+      - name: Organize pages structure
+        run: |
+          if [ -z ${{ inputs.gradle_module }} ]; then BUILD_SUBFOLDER=""; else BUILD_SUBFOLDER="${{ inputs.gradle_module }}/"; fi
+          OUTPUT_DIR=_site/${{ inputs.output_folder }}
+          mkdir -p $OUTPUT_DIR
+          cp -r ${BUILD_SUBFOLDER}build/dokka/html/* $OUTPUT_DIR
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}${{ inputs.output_folder }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
