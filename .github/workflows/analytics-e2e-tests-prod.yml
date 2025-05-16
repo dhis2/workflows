@@ -32,7 +32,7 @@ on:
 
 env:
     BASE_URL_INSTANCES: https://test.e2e.dhis2.org
-    NAME_PATTERN_PROD_INSTANCES: 'analytics-{version}'
+    NAME_PATTERN_PROD_INSTANCES: 'anly-e2e-{version}'
 
 concurrency:
     group: e2e-prod-${{ github.workflow }}-${{ github.ref }}
@@ -56,6 +56,12 @@ jobs:
               uses: dhis2/action-supported-legacy-versions@feat/support-hardcoded-max-version
               with:
                   dev-version: "2.43"
+
+            - name: Strip '2.' major version from versions
+              id: strip-major-version
+              run: |
+                  versions=$(echo '${{ steps.prod-versions.outputs.versions }}' | jq 'map(sub("^2\\."; ""))')
+                  echo "versions=$versions" >> $GITHUB_OUTPUT
 
     e2e-prod:
         needs: compute-prod-versions
