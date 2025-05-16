@@ -51,6 +51,11 @@ jobs:
             - name: Checkout
               uses: actions/checkout@v3
 
+            - name: Echo something
+              run: |
+                  echo "jj BASE_URL_INSTANCES: ${{ env.BASE_URL_INSTANCES }}"
+                  echo "jj NAME_PATTERN_PROD_INSTANCES: ${{ env.NAME_PATTERN_PROD_INSTANCES }}"
+
             - name: Output prod version urls
               id: prod-versions
               uses: dhis2/action-supported-legacy-versions@feat/minor-version-only
