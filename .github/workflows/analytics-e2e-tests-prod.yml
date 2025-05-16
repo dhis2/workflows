@@ -43,26 +43,7 @@ defaults:
         shell: bash
 
 jobs:
-    compute-prod-versions:
-        runs-on: ubuntu-latest
-        outputs:
-            versions: ${{ steps.prod-versions.outputs.versions }}
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v3
-
-            - name: Echo something
-              run: |
-                  echo "jj was here"
-
-            - name: Output prod version urls
-              id: prod-versions
-              uses: dhis2/action-supported-legacy-versions@feat/again
-              with:
-                  dev-version: "2.43"
-
     e2e-prod:
-        needs: compute-prod-versions
         runs-on: ubuntu-latest
         env:
             CI_BUILD_ID: ${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}
@@ -72,7 +53,7 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                versions: ${{ fromJSON(needs.compute-prod-versions.outputs.versions) }}
+                versions: [ '40', '41', '42' ]
                 spec-group: ${{ fromJson(inputs.spec-group) }}
         steps:
             - uses: actions/checkout@v3
