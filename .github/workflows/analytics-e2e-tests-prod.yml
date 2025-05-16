@@ -48,10 +48,18 @@ jobs:
         outputs:
             versions: ${{ steps.prod-versions.outputs.versions }}
         steps:
-            - name: Set hardcoded prod versions
-              id: set-versions
+            - name: Checkout
+              uses: actions/checkout@v3
+
+            - name: Echo something
               run: |
-                  echo 'versions=["40","41","42"]' >> $GITHUB_OUTPUT
+                  echo "jj was here"
+
+            - name: Output prod version urls
+              id: prod-versions
+              uses: dhis2/action-supported-legacy-versions@feat/again
+              with:
+                  dev-version: "2.43"
 
     e2e-prod:
         needs: compute-prod-versions
