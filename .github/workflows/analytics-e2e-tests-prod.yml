@@ -112,17 +112,6 @@ jobs:
                   CYPRESS_networkMode: live
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-            - name: Debug .vite folder contents
-              run: |
-                  VITE_DIR=".d2/shell/node_modules/.vite"
-                  if [ -d "$VITE_DIR" ]; then
-                      echo "✅ Found .vite directory: $(realpath $VITE_DIR)"
-                      echo "📂 Listing contents recursively:"
-                      find "$VITE_DIR" -type f -exec ls -lah {} \;
-                  else
-                      echo "❌ .vite folder not found at $VITE_DIR"
-                  fi
-
     e2e-tests-success:
         needs: e2e-prod
         if: ${{ success() || failure() }}
