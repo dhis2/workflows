@@ -116,6 +116,7 @@ jobs:
                   spec: ${{ join(matrix.spec-group.tests, ',') }}
                   group: ${{ inputs.should_record && format('e2e-chrome-parallel-{0}-{1}', matrix.versions, matrix.spec-group.id) || '' }}
                   ci-build-id: ${{ inputs.should_record && github.run_id || '' }}
+                  browser-options: '--enable-unsafe-swiftshader'
               env:
                   CI: true
                   BROWSER: none
