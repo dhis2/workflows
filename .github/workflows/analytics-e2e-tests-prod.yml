@@ -54,6 +54,7 @@ jobs:
             fail-fast: false
             matrix:
                 versions: [ '40', '41', '42' ]
+                containers: [ 1 ]
                 spec-group: ${{ fromJson(inputs.spec-group) }}
         steps:
             - uses: actions/checkout@v3
@@ -62,7 +63,7 @@ jobs:
                   node-version: 20.x
             - uses: browser-actions/setup-chrome@v1
               with:
-                  chrome-version: 146.0.7651.0
+                  chrome-version: stable
             - run: |
                   echo "BROWSER_PATH=$(which chrome)" >> $GITHUB_ENV
 
@@ -89,6 +90,27 @@ jobs:
                   echo "Group: ${{ inputs.should_record && format('e2e-chrome-parallel-{0}-{1}', matrix.versions, matrix.spec-group.id) || '' }}"
                   echo "CI Build ID: ${{ inputs.should_record && github.run_id || '' }}"
 
+            - name: Install system dependencies for WebGL
+              run: |
+                sudo apt-get update
+                sudo apt-get install -y \
+                  libgl1-mesa-glx \
+                  libgl1-mesa-dri \
+                  libglapi-mesa \
+                  libx11-xcb1 \
+                  libxcomposite1 \
+                  libxcursor1 \
+                  libxdamage1 \
+                  libxi6 \
+                  libxtst6 \
+                  libnss3 \
+                  libcups2 \
+                  libxss1 \
+                  libxrandr2 \
+                  libasound2 \
+                  libatk1.0-0 \
+                  libgtk-3-0
+                  
             - name: Run e2e tests
               uses: cypress-io/github-action@v5
               with:
@@ -111,6 +133,7 @@ jobs:
                   CYPRESS_dhis2Password: ${{ secrets.password }}
                   CYPRESS_networkMode: live
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  CYPRESS_CHROME_FLAGS: '--use-gl=swiftshader --disable-gpu-driver-bug-workarounds --disable-software-rasterizer --no-sandbox --disable-setuid-sandbox'
 
     e2e-tests-success:
         needs: e2e-prod
