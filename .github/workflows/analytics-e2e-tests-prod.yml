@@ -44,7 +44,7 @@ defaults:
 
 jobs:
     e2e-prod:
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-22.04
         env:
             CI_BUILD_ID: ${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}
             BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
@@ -54,7 +54,6 @@ jobs:
             fail-fast: false
             matrix:
                 versions: [ '40', '41', '42' ]
-                containers: [ 1 ]
                 spec-group: ${{ fromJson(inputs.spec-group) }}
         steps:
             - uses: actions/checkout@v3
