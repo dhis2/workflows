@@ -111,7 +111,7 @@ jobs:
                   CYPRESS_dhis2Password: ${{ secrets.password }}
                   CYPRESS_networkMode: live
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  CYPRESS_CHROME_FLAGS: '--use-gl=swiftshader --disable-gpu-driver-bug-workarounds --disable-software-rasterizer --no-sandbox --disable-setuid-sandbox'
+                  CYPRESS_CHROME_FLAGS: '--enable-unsafe-swiftshader --use-gl=swiftshader --disable-gpu --headless=new --no-sandbox --disable-dev-shm-usage --disable-software-rasterizer'
 
     e2e-tests-success:
         needs: e2e-prod
