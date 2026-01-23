@@ -60,11 +60,11 @@ jobs:
             - uses: actions/setup-node@v3
               with:
                   node-version: 20.x
-            - uses: browser-actions/setup-chrome@v1
+            - uses: browser-actions/setup-firefox@v1
               with:
-                  chrome-version: 138.0.7204.183
+                  firefox-version: latest-esr
             - run: |
-                  echo "BROWSER_PATH=$(which chrome)" >> $GITHUB_ENV
+                  echo "BROWSER_PATH=$(which firefox)" >> $GITHUB_ENV
 
             - name: Compute prod instance url
               id: instance-url
@@ -84,9 +84,9 @@ jobs:
               run: |
                   echo "Record: ${{ inputs.should_record }}"
                   echo "Parallel: ${{ inputs.should_record }}"
-                  echo "Browser: chrome"
+                  echo "Browser: firefox"
                   echo "Specs: ${{ join(matrix.spec-group.tests, ',') }}"
-                  echo "Group: ${{ inputs.should_record && format('e2e-chrome-parallel-{0}-{1}', matrix.versions, matrix.spec-group.id) || '' }}"
+                  echo "Group: ${{ inputs.should_record && format('e2e-firefox-parallel-{0}-{1}', matrix.versions, matrix.spec-group.id) || '' }}"
                   echo "CI Build ID: ${{ inputs.should_record && github.run_id || '' }}"
                   
             - name: Run e2e tests
@@ -97,9 +97,9 @@ jobs:
                   wait-on-timeout: 300
                   record: ${{ inputs.should_record }}
                   parallel: ${{ inputs.should_record }}
-                  browser: chrome
+                  browser: firefox
                   spec: ${{ join(matrix.spec-group.tests, ',') }}
-                  group: ${{ inputs.should_record && format('e2e-chrome-parallel-{0}-{1}', matrix.versions, matrix.spec-group.id) || '' }}
+                  group: ${{ inputs.should_record && format('e2e-firefox-parallel-{0}-{1}', matrix.versions, matrix.spec-group.id) || '' }}
                   ci-build-id: ${{ inputs.should_record && github.run_id || '' }}
               env:
                   CI: true
@@ -111,7 +111,6 @@ jobs:
                   CYPRESS_dhis2Password: ${{ secrets.password }}
                   CYPRESS_networkMode: live
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  CYPRESS_CHROME_FLAGS: '--enable-unsafe-swiftshader --use-gl=swiftshader --disable-gpu --headless=new --no-sandbox --disable-dev-shm-usage --disable-software-rasterizer'
 
     e2e-tests-success:
         needs: e2e-prod
