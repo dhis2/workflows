@@ -105,7 +105,7 @@ jobs:
                   echo "CI Build ID: ${{ inputs.should_record && github.run_id || '' }}"
 
             - name: Run e2e tests
-              uses: cypress-io/github-action@v5
+              uses: cypress-io/github-action@v6
               with:
                   start: yarn d2-app-scripts start
                   wait-on: 'http://localhost:3000'
@@ -113,10 +113,10 @@ jobs:
                   record: ${{ inputs.should_record }}
                   parallel: ${{ inputs.should_record }}
                   browser: chrome
+                  headed: true
                   spec: ${{ join(matrix.spec-group.tests, ',') }}
                   group: ${{ inputs.should_record && format('e2e-chrome-parallel-{0}-{1}', matrix.versions, matrix.spec-group.id) || '' }}
                   ci-build-id: ${{ inputs.should_record && github.run_id || '' }}
-                  browser-options: '--enable-unsafe-swiftshader'
               env:
                   CI: true
                   BROWSER: none
