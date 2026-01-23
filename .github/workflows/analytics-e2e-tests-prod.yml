@@ -89,27 +89,6 @@ jobs:
                   echo "Specs: ${{ join(matrix.spec-group.tests, ',') }}"
                   echo "Group: ${{ inputs.should_record && format('e2e-chrome-parallel-{0}-{1}', matrix.versions, matrix.spec-group.id) || '' }}"
                   echo "CI Build ID: ${{ inputs.should_record && github.run_id || '' }}"
-
-            - name: Install system dependencies for WebGL
-              run: |
-                sudo apt-get update
-                sudo apt-get install -y \
-                  libgl1-mesa-glx \
-                  libgl1-mesa-dri \
-                  libglapi-mesa \
-                  libx11-xcb1 \
-                  libxcomposite1 \
-                  libxcursor1 \
-                  libxdamage1 \
-                  libxi6 \
-                  libxtst6 \
-                  libnss3 \
-                  libcups2 \
-                  libxss1 \
-                  libxrandr2 \
-                  libasound2 \
-                  libatk1.0-0 \
-                  libgtk-3-0
                   
             - name: Run e2e tests
               uses: cypress-io/github-action@v5
