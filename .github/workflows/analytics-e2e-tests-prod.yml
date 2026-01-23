@@ -44,7 +44,7 @@ defaults:
 
 jobs:
     e2e-prod:
-        runs-on: ubuntu-22.04
+        runs-on: ubuntu-latest
         env:
             CI_BUILD_ID: ${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}
             BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
@@ -62,7 +62,7 @@ jobs:
                   node-version: 20.x
             - uses: browser-actions/setup-chrome@v1
               with:
-                  chrome-version: stable
+                  chrome-version: 139.0.7258.154
             - run: |
                   echo "BROWSER_PATH=$(which chrome)" >> $GITHUB_ENV
 
