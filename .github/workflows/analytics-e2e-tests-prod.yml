@@ -62,7 +62,7 @@ jobs:
                   node-version: 20.x
             - uses: browser-actions/setup-chrome@v1
               with:
-                  chrome-version: 142.0.7444.175
+                  chrome-version: 146.0.7651.0
             - run: |
                   echo "BROWSER_PATH=$(which chrome)" >> $GITHUB_ENV
 
