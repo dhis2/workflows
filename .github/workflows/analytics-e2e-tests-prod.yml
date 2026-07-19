@@ -32,7 +32,7 @@ on:
 
 env:
     BASE_URL_INSTANCES: https://test.e2e.dhis2.org
-    NAME_PATTERN_PROD_INSTANCES: 'analytics-{version}'
+    NAME_PATTERN_PROD_INSTANCES: 'anly-e2e-{version}'
 
 concurrency:
     group: e2e-prod-${{ github.workflow }}-${{ github.ref }}
@@ -43,24 +43,7 @@ defaults:
         shell: bash
 
 jobs:
-    compute-prod-versions:
-        runs-on: ubuntu-latest
-        outputs:
-            versions: ${{ steps.prod-versions.outputs.versions }}
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v3
-
-            - name: Output prod version urls
-              id: prod-versions
-              uses: dhis2/action-supported-legacy-versions@v1
-              with:
-                  instance-url-latest: https://test.e2e.dhis2.org/analytics-dev # can be removed if maxDHIS2Version has been specified
-                  username: ${{ secrets.username }}
-                  password: ${{ secrets.password }}
-
     e2e-prod:
-        needs: compute-prod-versions
         runs-on: ubuntu-latest
         env:
             CI_BUILD_ID: ${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}
@@ -70,13 +53,13 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                versions: ${{ fromJSON(needs.compute-prod-versions.outputs.versions) }}
+                versions: [ '40', '41', '42' ]
                 spec-group: ${{ fromJson(inputs.spec-group) }}
         steps:
             - uses: actions/checkout@v3
             - uses: actions/setup-node@v3
               with:
-                  node-version: 18.x
+                  node-version: 20.x
             - uses: browser-actions/setup-chrome@v1
               with:
                   chrome-version: stable
@@ -109,7 +92,7 @@ jobs:
             - name: Run e2e tests
               uses: cypress-io/github-action@v5
               with:
-                  start: yarn d2-app-scripts start
+                  start: yarn start
                   wait-on: 'http://localhost:3000'
                   wait-on-timeout: 300
                   record: ${{ inputs.should_record }}
@@ -122,6 +105,7 @@ jobs:
                   CI: true
                   BROWSER: none
                   CYPRESS_RECORD_KEY: ${{ secrets.recordkey }}
+                  CYPRESS_VIDEO: ${{ inputs.should_record }}
                   CYPRESS_dhis2BaseUrl: ${{ steps.instance-url.outputs.url }}
                   CYPRESS_dhis2InstanceVersion: ${{ matrix.versions }}
                   CYPRESS_dhis2Username: ${{ secrets.username }}
