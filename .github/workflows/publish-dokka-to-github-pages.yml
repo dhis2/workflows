@@ -17,6 +17,11 @@ on:
         required: false
         type: number
         default: 17
+      dokka_version:
+        description: "Dokka version, just major number. Supported versions: 1, 2"
+        required: false
+        type: number
+        default: 1
       gradle_args:
         description: "Arguments to be passed to the gradle command line."
         required: false
@@ -59,7 +64,15 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build Dokka Html
-        run: ./gradlew ${{ inputs.gradle_module }}:dokkaHtml ${{ inputs.gradle_args }}
+        run: |
+          if [ "${{ inputs.dokka_version }}" = "1" ]; then
+            ./gradlew ${{ inputs.gradle_module }}:dokkaHtml ${{ inputs.gradle_args }}
+          elif [ "${{ inputs.dokka_version }}" = "2" ]; then
+            ./gradlew ${{ inputs.gradle_module }}:dokkaGenerateHtml ${{ inputs.gradle_args }}
+          else
+            echo "Unsupported dokka_version: ${{ inputs.dokka_version }}" >&2
+            exit 1
+          fi
 
       - name: Organize pages structure
         run: |
