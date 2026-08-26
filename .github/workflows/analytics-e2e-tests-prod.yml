@@ -3,14 +3,15 @@ name: 'e2e-prod'
 # Requirements:
 #
 # - Customize environment variables:
-#     BASE_URL_INSTANCES: Set the base url for the instances, e.g. https://test.e2e.dhis2.org
-#     NAME_PATTERN_PROD_INSTANCES: Set the name pattern for your instances. {version} will be replaced by "[majorVersion].[minorVersion]"
+#     BASE_URL_INSTANCES: Set the base url for the instances, e.g. https://e2e.im.dhis2.org
+#     NAME_PATTERN_PROD_INSTANCES: Set the name pattern for your instances. {version} will be replaced by the DHIS2 minor version, e.g. "42"
 #
-# - Other optional customizations:
-#     containers: Set the matrix containers array for the e2e-prod job. The number of parallel Cypress instances running for each backend version will equal the array length.
+# - Version rollover:
+#     The tested DHIS2 versions are hardcoded in the "versions" matrix of the e2e-prod job.
+#     When a new stable version instance is available, bump the matrix (e.g. ['41', '42', '43'] -> ['42', '43', '44']).
 #
 # - Set status check as required:
-#     We recommend setting "e2e-tests-success"  as a required step in your workflow.
+#     We recommend setting "e2e-tests-success" as a required step in your workflow.
 
 on:
     workflow_call:
@@ -31,8 +32,8 @@ on:
                 required: true
 
 env:
-    BASE_URL_INSTANCES: https://test.e2e.dhis2.org
-    NAME_PATTERN_PROD_INSTANCES: 'anly-e2e-{version}'
+    BASE_URL_INSTANCES: https://e2e.im.dhis2.org
+    NAME_PATTERN_PROD_INSTANCES: 'analytics-{version}'
 
 concurrency:
     group: e2e-prod-${{ github.workflow }}-${{ github.ref }}
@@ -53,7 +54,7 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                versions: [ '40', '41', '42' ]
+                versions: ['41', '42', '43']
                 spec-group: ${{ fromJson(inputs.spec-group) }}
         steps:
             - uses: actions/checkout@v7
